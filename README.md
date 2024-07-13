@@ -39,6 +39,22 @@ The service is built with Flask and uses PostgreSQL as the database.
 
    The backend service will be available at `http://localhost:5000`.
 
+3. **Users**:
+
+    admin user -
+    username: admin
+    password: adminpassword
+
+    There are 16 teams in the db,
+
+    coaches - 1 coach for each team
+    username: coach<number> for example coach1
+    password: password
+
+    players - 10 players for each team
+    username: player<number>_Team<number> ex. player1_Team1
+    password: password
+
 ## API Endpoints
 
 ### Authentication
