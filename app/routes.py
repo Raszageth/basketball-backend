@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from flask import current_app as app, make_response
-from flask import request, jsonify, abort
+from flask import request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from app.db_models import Round, User, Team, Player, UserActivity
 from database.db import db
@@ -10,11 +10,11 @@ from database.db import db
 def login():
     auth = request.json
     if not auth or not auth.get("username") or not auth.get("password"):
-        return abort(401, description="Missing username or password")
+        return make_response(jsonify({'message': "Missing username or password"}), 401)
     user = User.query.filter_by(username=auth.get("username")).first()
 
     if not user or not user.check_password(auth.get("password")):  
-        return abort(401, description="Invalid credentials")
+        return make_response(jsonify({'message': "Invalid credentials"}), 401)
 
     additional_claims = {
         'username': user.username,
@@ -46,7 +46,7 @@ def logout():
         last_activity.logout_time = datetime.now(timezone.utc)
         db.session.commit()
 
-    response = make_response({"msg": "Logout successful"}, 200)
+    response = make_response(jsonify({"message": "Logout successful"}), 200)
     return response
 
 @app.route('/site_statistics', methods=['GET'])
@@ -56,7 +56,7 @@ def site_statistics():
     user = User.query.get(user_id)
 
     if user.role != 'admin':
-        abort(403, description="Access denied")
+        return make_response(jsonify({'message': "Access denied"}), 403)
 
     users = User.query.all()
     statistics = []
@@ -83,18 +83,18 @@ def get_team_details(team_id):
     user = User.query.get(user_id)    
 
     if not user:
-        abort(404, description="User not found")
+        return make_response(jsonify({'message': "User not found"}), 404)
 
     claims = get_jwt()
     user_role = claims.get('role')
     user_team_id = claims.get('team_id')
 
     if not (user_role  == 'admin' or (user_role  == 'coach' and user_team_id == team_id)):
-        abort(403, description="Access denied")
+        return make_response(jsonify({'message': "Access denied"}), 403)
 
     team = Team.query.get(team_id)
     if not team:
-        abort(404, description="Team not found")
+        return make_response(jsonify({'message': "Team not found"}), 404)
 
     players = [{
         'id': player.id,
@@ -165,7 +165,7 @@ def get_rounds():
 def get_player_details(player_id):
     player = Player.query.get(player_id)
     if not player:
-        return abort(404, description="Player not found")
+        return make_response(jsonify({'message': "Player not found"}), 404)
     
     player_data = {
         'id': player.id,
