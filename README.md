@@ -23,7 +23,7 @@ The service is built with Flask and uses PostgreSQL as the database.
    You can use the `.env` provided as a baseline or create a `.env` file in the root of the project and add the necessary environment variables:
 
    ```plaintext
-   DATABASE_URL=postgresql://postgres:postgres@db:5432/DB
+   DATABASE_URL=database_url
    JWT_SECRET_KEY=your_jwt_secret_key
    ```
 
