@@ -1,0 +1,9 @@
+[MASTER]
+init-hook='import sys; sys.path.append("/app")
+disable=
+    C0114, # missing-module-docstring
+    C0115, # missing-class-docstring
+    C0116, # missing-function-docstring
+    W0718, # broad-exception-caught
+    I1101, # c-extension-no-member
+    R0903, # too-few-public-methods

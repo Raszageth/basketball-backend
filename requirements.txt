@@ -1,0 +1,12 @@
+cryptography==3.4.8
+Flask==3.0.3
+flask_sqlalchemy==3.1.1
+ipython==8.12.3
+Jinja2==3.1.4
+keyring==23.5.0
+SQLAlchemy==2.0.31
+tornado==6.4.1
+psycopg2==2.9.9
+python-dotenv==1.0.1
+Flask_Cors==4.0.1
+Flask_JWT_Extended==4.6.0
