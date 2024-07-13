@@ -91,7 +91,7 @@ The service is built with Flask and uses PostgreSQL as the database.
 The service uses PostgreSQL as the database. The database is set up and managed via Docker Compose.
 
 Tables Diagrm:
-![alt text](https://https://github.com/Raszageth/basketball-backend/blob/main/db_tables_diagram.png "DB Diagrm")
+![alt text](https://https://github.com/Raszageth/basketball-backend/raw/main/db_tables_diagram.png "DB Diagrm")
 
 ## Testing
 
