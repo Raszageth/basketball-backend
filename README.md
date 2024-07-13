@@ -41,19 +41,24 @@ The service is built with Flask and uses PostgreSQL as the database.
 
 3. **Users**:
 
-    admin user -
+    admin user
+    ```plaintext
     username: admin
     password: adminpassword
+    ```
 
     There are 16 teams in the db,
 
     coaches - 1 coach for each team
-    username: coach<number> for example coach1
+    ```plaintext
+    username: coach1-16
     password: password
-
+    ```
     players - 10 players for each team
-    username: player<number>_Team<number> ex. player1_Team1
+    ```plaintext
+    username: player1-10_Team1-16
     password: password
+    ```
 
 ## API Endpoints
 
