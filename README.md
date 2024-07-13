@@ -41,7 +41,7 @@ The service is built with Flask and uses PostgreSQL as the database.
 
 3. **Users**:
 
-    admin user
+    league admin -
     ```plaintext
     username: admin
     password: adminpassword
@@ -90,9 +90,12 @@ The service is built with Flask and uses PostgreSQL as the database.
 
 The service uses PostgreSQL as the database. The database is set up and managed via Docker Compose.
 
+Tables Diagrm:
+![alt text](https://github.com/Raszageth/basketball-backend/src/db_tables_diagram.png "DB Diagrm")
+
 ## Testing
 
-To run the test_db, removed comment in docker compsoe and run 
+To run the test_db, remove comment in docker for db_test
 
 1. **Run db population test**:
 
