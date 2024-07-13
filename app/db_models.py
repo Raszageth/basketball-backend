@@ -77,9 +77,14 @@ class GamePlayer(db.Model):
     )
     score = db.Column(db.Integer, nullable=False)
 
+
 class UserActivity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    login_time = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
+    login_time = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.now(timezone.utc)
+    )
     logout_time = db.Column(db.DateTime, nullable=True)
     user = db.relationship('User', backref='activities')

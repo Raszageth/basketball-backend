@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta, timezone
 from flask import current_app as app, make_response
 from flask import request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
+from flask_jwt_extended import (
+    create_access_token, jwt_required, get_jwt_identity, get_jwt
+)
 from app.db_models import Round, User, Team, Player, UserActivity
 from database.db import db
 
@@ -10,10 +12,12 @@ from database.db import db
 def login():
     auth = request.json
     if not auth or not auth.get("username") or not auth.get("password"):
-        return make_response(jsonify({'message': "Missing username or password"}), 401)
+        return make_response(
+            jsonify({'message': "Missing username or password"}), 401
+        )
     user = User.query.filter_by(username=auth.get("username")).first()
 
-    if not user or not user.check_password(auth.get("password")):  
+    if not user or not user.check_password(auth.get("password")):
         return make_response(jsonify({'message': "Invalid credentials"}), 401)
 
     additional_claims = {
@@ -29,12 +33,16 @@ def login():
         additional_claims=additional_claims
     )
 
-    login_activity = UserActivity(user_id=user.id, login_time=datetime.now(timezone.utc))
+    login_activity = UserActivity(
+        user_id=user.id,
+        login_time=datetime.now(timezone.utc)
+    )
     db.session.add(login_activity)
     db.session.commit()
 
     response = make_response({'token': token}, 201)
     return response
+
 
 @app.route('/logout', methods=['POST'])
 @jwt_required()
@@ -49,6 +57,7 @@ def logout():
     response = make_response(jsonify({"message": "Logout successful"}), 200)
     return response
 
+
 @app.route('/site_statistics', methods=['GET'])
 @jwt_required()
 def site_statistics():
@@ -62,9 +71,12 @@ def site_statistics():
     statistics = []
     for user in users:
         login_count = UserActivity.query.filter_by(user_id=user.id).count()
-        total_time = sum((activity.logout_time - activity.login_time).total_seconds()
-                         for activity in user.activities if activity.logout_time)
-        is_online = UserActivity.query.filter_by(user_id=user.id).order_by(UserActivity.login_time.desc()).first()
+        total_time = sum(
+            (activity.logout_time - activity.login_time).total_seconds()
+            for activity in user.activities if activity.logout_time
+        )
+        is_online = UserActivity.query.filter_by(user_id=user.id).order_by(
+            UserActivity.login_time.desc()).first()
         is_online = is_online and not is_online.logout_time
         statistics.append({
             'username': user.username,
@@ -72,15 +84,16 @@ def site_statistics():
             'total_time': total_time,
             'is_online': is_online
         })
-    
-    response = make_response(jsonify(statistics), 201)
+
+    response = make_response(jsonify(statistics), 200)
     return response
+
 
 @app.route('/team/<int:team_id>', methods=['GET'])
 @jwt_required()
 def get_team_details(team_id):
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)    
+    user = User.query.get(user_id)
 
     if not user:
         return make_response(jsonify({'message': "User not found"}), 404)
@@ -89,7 +102,8 @@ def get_team_details(team_id):
     user_role = claims.get('role')
     user_team_id = claims.get('team_id')
 
-    if not (user_role  == 'admin' or (user_role  == 'coach' and user_team_id == team_id)):
+    if not (user_role == 'admin' or
+            (user_role == 'coach' and user_team_id == team_id)):
         return make_response(jsonify({'message': "Access denied"}), 403)
 
     team = Team.query.get(team_id)
@@ -109,18 +123,19 @@ def get_team_details(team_id):
     }), 201)
     return response
 
+
 @app.route('/rounds', methods=['GET'])
 @jwt_required()
 def get_rounds():
     rounds = Round.query.order_by(Round.round_number).all()
-    
+
     rounds_data = []
-    for round in rounds:
+    for round_ in rounds:
         round_data = {
-            'round_number': round.round_number,
+            'round_number': round_.round_number,
             'matches': []
         }
-        for game in round.games:
+        for game in round_.games:
             team1 = Team.query.get(game.team1_id)
             team2 = Team.query.get(game.team2_id)
             match_data = {
@@ -138,9 +153,9 @@ def get_rounds():
             round_data['matches'].append(match_data)
             if game.winner_id:
                 final_winner = Team.query.get(game.winner_id)
-        
+
         rounds_data.append(round_data)
-        
+
     # add the winner in another round so we can display it nicely
     if final_winner:
         winner_round = {
@@ -157,8 +172,9 @@ def get_rounds():
             ]
         }
         rounds_data.append(winner_round)
-    response = make_response(jsonify(rounds_data), 201)
+    response = make_response(jsonify(rounds_data), 200)
     return response
+
 
 @app.route('/player/<int:player_id>', methods=['GET'])
 @jwt_required()
@@ -166,7 +182,7 @@ def get_player_details(player_id):
     player = Player.query.get(player_id)
     if not player:
         return make_response(jsonify({'message': "Player not found"}), 404)
-    
+
     player_data = {
         'id': player.id,
         'name': player.name,
@@ -175,5 +191,5 @@ def get_player_details(player_id):
         'height': player.height,
         'team_id': player.team_id,
     }
-    response = make_response(jsonify(player_data), 201)
+    response = make_response(jsonify(player_data), 200)
     return response
